@@ -10,23 +10,23 @@ async function main() {
             maxX = 0,
             maxY = 0;
 
-        // try {
-        //     await waitFor(
-        //         () => {
-        //             const mouse = robot.getMousePos();
-        //             maxX = Math.max(maxX, mouse.x);
-        //             maxY = Math.max(maxY, mouse.y);
-        //             !x && (x = mouse.x);
-        //             !y && (y = mouse.y);
+        try {
+            await waitFor(
+                () => {
+                    const mouse = robot.getMousePos();
+                    maxX = Math.max(maxX, mouse.x);
+                    maxY = Math.max(maxY, mouse.y);
+                    !x && (x = mouse.x);
+                    !y && (y = mouse.y);
 
-        //             x = Math.min(x, mouse.x);
-        //             y = Math.min(y, mouse.y);
-        //             log('Mouse is at x:' + mouse.x + ' y:' + mouse.y);
-        //         },
-        //         () => 1e3,
-        //         10
-        //     );
-        // } catch (err) {}
+                    x = Math.min(x, mouse.x);
+                    y = Math.min(y, mouse.y);
+                    log('Mouse is at x:' + mouse.x + ' y:' + mouse.y);
+                },
+                () => 1e3,
+                10
+            );
+        } catch (err) {}
 
         const offsetX = maxX - x,
             offsetY = maxY - y;
