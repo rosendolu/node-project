@@ -1,0 +1,33 @@
+{
+    "name": "node-project",
+    "description": "Nodejs facilitated project",
+    "type": "commonjs",
+    "version": "0.0.1",
+    "main": "app.js",
+    "scripts": {
+        "test": "node --test module/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/rosendolu/node-project.git"
+    },
+    "keywords": [
+        "node",
+        "project"
+    ],
+    "author": "rosendolu",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/rosendolu/node-project/issues"
+    },
+    "homepage": "https://github.com/rosendolu/node-project#readme",
+    "dependencies": {
+        "robotjs": "^0.6.0"
+    },
+    "devDependencies": {
+        "globals": "^15.6.0",
+        "nodemon": "^3.1.4",
+        "pkg": "^5.8.1",
+        "typescript": "^5.5.2"
+    }
+}
