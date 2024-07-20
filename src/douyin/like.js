@@ -4,67 +4,56 @@ main();
 async function main() {
     try {
         log('start');
-        const run = createConcurrent(2);
+        const run = createConcurrent(5);
         let x = 0,
-            y = 0,
-            maxX = 0,
-            maxY = 0;
+            y = 0;
 
         try {
             await waitFor(
                 () => {
                     const mouse = robot.getMousePos();
-                    maxX = Math.max(maxX, mouse.x);
-                    maxY = Math.max(maxY, mouse.y);
-                    !x && (x = mouse.x);
-                    !y && (y = mouse.y);
+                    x = mouse.x;
+                    y = mouse.y;
 
-                    x = Math.min(x, mouse.x);
-                    y = Math.min(y, mouse.y);
-                    log('Mouse is at x:' + mouse.x + ' y:' + mouse.y);
+                    // x = Math.min(x, mouse.x);
+                    // y = Math.min(y, mouse.y);
+                    log('Mouse is at x:' + x + ' y:' + y);
                 },
                 () => 1e3,
                 10
             );
         } catch (err) {}
 
-        const offsetX = maxX - x,
-            offsetY = maxY - y;
-
-        log('Rect', x, y, `offsetX:${offsetX},offsetY: ${offsetY}`);
-
         await waitFor(
             async () => {
-                // 获取鼠标当前位置
-                let mouse = robot.getMousePos();
-                log('Mouse is at x:' + mouse.x + ' y:' + mouse.y);
+                // const mouse = robot.getMousePos();
+                // x = mouse.x;
+                // y = mouse.y;
 
-                // 移动鼠标到指定位置 (例如：x = 500, y = 300)
-                const finalX = x + getRandomIntInclusive(0, offsetX),
-                    finalY = y + getRandomIntInclusive(0, offsetY);
+                const finalX = x + getRandomIntInclusive(0, 50),
+                    finalY = y + getRandomIntInclusive(0, 50);
 
                 robot.moveMouse(finalX, finalY);
-                log('Mouse moved to', finalX, finalY);
+                log('Mouse is at x:' + finalX + ' y:' + finalY);
 
                 await Promise.all(
-                    new Array(getRandomIntInclusive(1, 30)).fill(0).map((item, index) =>
+                    new Array(getRandomIntInclusive(50, 100)).fill(0).map((item, index) =>
                         run(async () => {
                             // 执行鼠标左键点击
                             robot.mouseClick('left', true);
                             await delay(getRandomIntInclusive(1, 10) * 1e2);
                             robot.moveMouse(
-                                finalX + getRandomIntInclusive(0, 50),
-                                finalY + getRandomIntInclusive(0, 50)
+                                finalX + getRandomIntInclusive(0, 20),
+                                finalY + getRandomIntInclusive(0, 20)
                             );
                             log('click', index);
                         })
                     )
                 );
-
                 // 将鼠标移回原位置
                 log('click end');
             },
-            () => getRandomIntInclusive(1, 7) * 1e3
+            () => getRandomIntInclusive(5, 30) * 1e3
         );
         log('end');
     } catch (err) {
