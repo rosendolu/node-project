@@ -1,5 +1,5 @@
 function log(...args) {
-    console.log(`[${new Date().toLocaleTimeString()}]:`, ...args);
+    console.log(`[${new Date().toLocaleTimeString()}]: `, ...args);
 }
 function createConcurrent(concurrency) {
     let pendingCount = 0;
@@ -37,18 +37,27 @@ async function waitFor(fn, msFn, maxCount = -1) {
         if (maxCount != -1 && pollCount > maxCount) {
             return reject(`maxCount limit, maxCount`);
         }
-        await delay(msFn());
+        await delay(getMilliSeconds(msFn));
         callback(resolve, reject);
     }
     return new Promise((resolve, reject) => callback(resolve, reject));
 }
+
+function getMilliSeconds(arg) {
+    if (typeof arg === 'function') {
+        return arg();
+    }
+    return arg;
+}
+
 async function delay(ms) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve();
-        }, ms);
+        }, getMilliSeconds(ms));
     });
 }
+
 module.exports = {
     log,
     delay,
