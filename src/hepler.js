@@ -57,8 +57,12 @@ async function delay(ms) {
         }, getMilliSeconds(ms));
     });
 }
+function isNull(val) {
+    return Object.is(val, null);
+}
 
 module.exports = {
+    isNull,
     log,
     delay,
     createConcurrent,

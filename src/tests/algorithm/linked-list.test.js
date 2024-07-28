@@ -2,7 +2,7 @@ const assert = require('assert/strict');
 
 const { test, describe, before, beforeEach } = require('node:test');
 const { log } = require('../../hepler');
-const { LinkedList, traverse_linear, traverse_linear_for, traverse_recursive } = require('../../algorithm/linkedList');
+const { LinkedList, traverse_linear, traverse_linear_for, traverse_recursive } = require('../../algorithm/LinkedList');
 
 describe('linkedList', () => {
     let list = new LinkedList();
