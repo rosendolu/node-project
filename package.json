@@ -6,7 +6,8 @@
     "main": "src/app.js",
     "scripts": {
         "test": "node --test",
-        "start": "node src/app.js"
+        "start": "node --watch src/app.js",
+        "debug": "node src/tests/index.test.js"
     },
     "repository": {
         "type": "git",
