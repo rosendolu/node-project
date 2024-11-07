@@ -4,9 +4,11 @@ async function main(
     priceMultiple = 1,
     dcaOrderSize,
     dcaOrderMultiple = 1.1,
-    maxToken
+    maxToken,
+    takeProfit = 0.1
 ) {
-    let accToken = 0;
+    let accToken = 0,
+        accUsdt = 0;
     const history = [];
 
     if (isBrowser()) {
@@ -30,8 +32,8 @@ async function main(
                 priceInputEle.value = price;
                 // priceInputEle.blur();
             }
+            await sleep();
         }
-        await sleep();
         let count = dcaOrderSize ? dcaOrderSize : Number((100 / triggerPrice).toFixed(4));
         count *= dcaOrderMultiple ** i;
 
@@ -52,10 +54,20 @@ async function main(
             break;
         }
         accToken += count;
+        accUsdt += count * price;
+        const averagePrice = accUsdt / accToken;
         // console.log(`price:${price} count:${count} sumup:${accToken}`);
-        history.push({ price, count });
-        await sleep();
+
+        history.push({
+            price,
+            count,
+            usdt: price * count,
+            accUsdt,
+            averagePrice,
+            buy: averagePrice * (1 - takeProfit),
+        });
         if (isBrowser()) {
+            await sleep();
             if (!confirm(`price:${price} count:${count} => ${(count * price).toFixed(2)}$`)) {
                 break;
             }
@@ -67,21 +79,27 @@ async function main(
         }
     }
 
-    console.log(
-        `OrderCount：${history.length} TokenCount:${accToken} priceChange:${(
-            (history.at(-1).price / history.at(0).price - 1) *
-            100
-        ).toFixed(2)} %`
-    );
+    const priceChange = `${((history.at(-1).price / history.at(0).price - 1) * 100).toFixed(2)} %`;
+
+    console.log(`OrderCount：${history.length} TokenCount:${accToken} priceChange:${priceChange}`);
     console.table(history);
+    const key = `xorder-${new Date().toLocaleString()}`;
     if (isBrowser()) {
-        localStorage.setItem(
-            `xorder-${new Date().toLocaleTimeString()}`,
-            JSON.stringify({
+        let record = JSON.stringify(
+            {
                 accToken,
+                priceChange,
                 history,
-            })
+            },
+            null,
+            2
         );
+        localStorage.setItem(key, record);
+        confirm(record);
+    } else {
+        const fs = require('fs');
+        const path = require('path');
+        fs.writeFileSync(path.resolve('dist', Date.now() + '.json'), JSON.stringify(history));
     }
 }
 async function sleep(ms = 1e3) {
@@ -94,4 +112,4 @@ async function sleep(ms = 1e3) {
 function isBrowser() {
     return typeof window !== 'undefined';
 }
-main(0.3015, 1.02, 1.02, 150, 1.05, 1e4);
+main(0.2771, 1.02, 1.02, 150, 1.05, 1e4);
