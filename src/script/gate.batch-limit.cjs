@@ -1,3 +1,4 @@
+main(0.5, 1.03, 1, 500, 1.1, 3e3, 0.15);
 async function main(
     triggerPrice,
     priceDerivation = 1.015,
@@ -36,6 +37,7 @@ async function main(
         }
         let count = dcaOrderSize ? dcaOrderSize : Number((100 / triggerPrice).toFixed(4));
         count *= dcaOrderMultiple ** i;
+        count = Math.min(maxToken - accToken, count);
 
         if (isBrowser()) {
             let numInput = document.querySelector('#trade_spot_limit_number_input');
@@ -50,7 +52,7 @@ async function main(
                 numInput.value = count;
             }
         }
-        if (accToken + count > maxToken) {
+        if (count <= 0) {
             break;
         }
         accToken += count;
@@ -63,6 +65,7 @@ async function main(
             count,
             usdt: price * count,
             accUsdt,
+            accToken,
             averagePrice,
             buy: averagePrice * (1 - takeProfit),
         });
@@ -75,13 +78,14 @@ async function main(
             document
                 .querySelector('#trading_dom > div.trading_dom > div.tab_body > div > div > div.row > div > button')
                 ?.click();
-            await sleep(5e3);
+            await sleep();
         }
     }
 
     const priceChange = `${((history.at(-1).price / history.at(0).price - 1) * 100).toFixed(2)} %`;
 
-    console.log(`OrderCount：${history.length} TokenCount:${accToken} priceChange:${priceChange}`);
+    const sumUpText = `OrderCount：${history.length} TokenCount:${accToken} priceChange:${priceChange}`;
+    console.log(sumUpText);
     console.table(history);
     const key = `xorder-${new Date().toLocaleString()}`;
     if (isBrowser()) {
@@ -95,11 +99,11 @@ async function main(
             2
         );
         localStorage.setItem(key, record);
-        confirm(record);
+        confirm(sumUpText);
     } else {
         const fs = require('fs');
         const path = require('path');
-        fs.writeFileSync(path.resolve('dist', Date.now() + '.json'), JSON.stringify(history));
+        fs.writeFileSync(path.resolve('dist', `[${triggerPrice}].json`), JSON.stringify(history));
     }
 }
 async function sleep(ms = 1e3) {
@@ -112,4 +116,3 @@ async function sleep(ms = 1e3) {
 function isBrowser() {
     return typeof window !== 'undefined';
 }
-main(0.2771, 1.02, 1.02, 150, 1.05, 1e4);
