@@ -1,13 +1,16 @@
-main(0.5, 1.03, 1, 500, 1.1, 3e3, 0.15);
+main('SELL', 0.3117, 0.02, 0, undefined, 0.1, 1e4, 0.1);
+
 async function main(
+    action = 'BUY',
     triggerPrice,
-    priceDerivation = 1.015,
-    priceMultiple = 1,
+    priceDerivation = 0.015,
+    priceMultiple = 0,
     dcaOrderSize,
-    dcaOrderMultiple = 1.1,
+    dcaOrderMultiple = 0.1,
     maxToken,
     takeProfit = 0.1
 ) {
+    const isBuy = action == 'BUY';
     let accToken = 0,
         accUsdt = 0;
     const history = [];
@@ -19,7 +22,9 @@ async function main(
         await sleep();
     }
     for (let i = 0; i < 100; i++) {
-        const price = Number((triggerPrice * priceDerivation ** i * priceMultiple).toFixed(4));
+        const priceOffset = (isBuy ? 1 - priceDerivation : 1 + priceDerivation) ** i;
+
+        const price = Number((triggerPrice * priceOffset * (1 + priceMultiple)).toFixed(4));
 
         if (isBrowser()) {
             let priceInputEle = document.querySelector('#trade_spot_limit_price_input');
@@ -36,7 +41,7 @@ async function main(
             await sleep();
         }
         let count = dcaOrderSize ? dcaOrderSize : Number((100 / triggerPrice).toFixed(4));
-        count *= dcaOrderMultiple ** i;
+        count *= (1 + dcaOrderMultiple) ** i;
         count = Math.min(maxToken - accToken, count);
 
         if (isBrowser()) {
@@ -103,10 +108,10 @@ async function main(
     } else {
         const fs = require('fs');
         const path = require('path');
-        fs.writeFileSync(path.resolve('dist', `[${triggerPrice}].json`), JSON.stringify(history));
+        fs.writeFileSync(path.resolve('dist', `[${action}-${triggerPrice}].json`), JSON.stringify(history));
     }
 }
-async function sleep(ms = 1e3) {
+async function sleep(ms = 5e2) {
     return new Promise(resolve => {
         setTimeout(() => {
             resolve();
