@@ -1,4 +1,4 @@
-main('SELL', 0.3117, 0.02, 0, undefined, 0.1, 1e4, 0.1);
+main('SELL', 0.3849, 0.02, 0, 371, 0.1, 3437, 0.05);
 
 async function main(
     action = 'BUY',
