@@ -1,4 +1,4 @@
-main('SELL', 0.3849, 0.02, 0, 371, 0.1, 3437, 0.05);
+main('SELL', 0.45, 0.015, 0, 300, 0.05, 2e3, 0.05);
 
 async function main(
     action = 'BUY',
@@ -16,9 +16,12 @@ async function main(
     const history = [];
 
     if (isBrowser()) {
-        document
-            .querySelector('#trading_dom > div.trading_dom > div.row-container > div > div.sc-7a8da2ac-0.hfsuIk')
-            ?.click();
+        const box = document.querySelector('#trading_dom > div.trading_dom').firstElementChild.firstElementChild;
+        if (action === 'BUY') {
+            box.firstElementChild.click();
+        } else {
+            box.lastElementChild.click();
+        }
         await sleep();
     }
     for (let i = 0; i < 100; i++) {
@@ -55,6 +58,7 @@ async function main(
                 numInput.dispatchEvent(event);
                 // numInput.focus();
                 numInput.value = count;
+                await sleep();
             }
         }
         if (count <= 0) {
@@ -72,11 +76,11 @@ async function main(
             accUsdt,
             accToken,
             averagePrice,
-            buy: averagePrice * (1 - takeProfit),
+            [isBuy ? 'sell' : 'buy']: averagePrice * (isBuy ? 1 + takeProfit : 1 - takeProfit),
         });
         if (isBrowser()) {
             await sleep();
-            if (!confirm(`price:${price} count:${count} => ${(count * price).toFixed(2)}$`)) {
+            if (!confirm(`${action}: price:${price} count:${count} => ${(count * price).toFixed(2)}$`)) {
                 break;
             }
             await sleep();

@@ -114,7 +114,7 @@ async function main() {
             let count = Math.random() * 1e3;
             while (i < count) {
                 document.querySelector('#gate-reward-btns > button.live-like')?.click();
-                await sleep(Math.random() * 3000);
+                await sleep(Math.random() * 1500);
                 i++;
             }
             await sleep(1e3 * Math.random() * 600);
