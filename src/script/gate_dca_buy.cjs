@@ -26,7 +26,8 @@ async function main(priceDiff = 0.05, gridCount = 5) {
         const actions = new Array(gridCount).fill(0).map((val, i) => {
             return average_sell * (1 - priceDiff * (i + 1));
         });
-        console.table('sell actions', priceDiff, actions);
+        console.log(`priceDiff: ${priceDiff}`);
+        console.table(actions);
         //  caculate average price
     } catch (err) {
         console.error('err:', err);
