@@ -1,8 +1,10 @@
-new Array(5).fill(0).forEach((val, i) => {
+const priceMultiple = 0.95;
+
+new Array(10).fill(0).forEach((val, i) => {
     let index = i + 1;
     const tokenBaseRate = index * 0.01;
 
-    new Array(5).fill(0).forEach((val, i1) => {
+    new Array(10).fill(0).forEach((val, i1) => {
         const priceBaseRate = (i1 + 1) * 0.01;
         const data = [];
         let accToken = 0;

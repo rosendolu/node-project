@@ -1,4 +1,4 @@
-main('SELL', 0.45, 0.015, 0, 300, 0.05, 2e3, 0.05);
+main('SELL', 0.2147, 0.03, 0, 500, 0.1, 2500, 0.05);
 
 async function main(
     action = 'BUY',
@@ -8,7 +8,8 @@ async function main(
     dcaOrderSize,
     dcaOrderMultiple = 0.1,
     maxToken,
-    takeProfit = 0.1
+    takeProfit = 0.1,
+    curPrice = 0.1859
 ) {
     const isBuy = action == 'BUY';
     let accToken = 0,
@@ -71,6 +72,7 @@ async function main(
 
         history.push({
             price,
+            diff: price - curPrice,
             count,
             usdt: price * count,
             accUsdt,

@@ -1,5 +1,7 @@
-main();
-async function main(priceDiff = 0.05, gridCount = 5) {
+main('buy', 0.015, 5);
+
+async function main(action = 'buy', priceDiff = 0.05, gridCount = 5) {
+    const isBuy = action === 'buy';
     try {
         const log = (...args) => console.log(`[${new Date().toLocaleTimeString()}]:`, ...args);
         const table = [
@@ -19,16 +21,16 @@ async function main(priceDiff = 0.05, gridCount = 5) {
             const num = parseFloat(col_num.childNodes[index].textContent.split(/\s+/)?.[0]);
             total_token += num;
             total_u += price * num;
-            history.push({ price, average_sell: total_u / total_token, num, total_token, total_u });
+            history.push({ price, average: total_u / total_token, num, total_token, total_u });
         }
         console.table(history);
-        const average_sell = history.at(-1).average_sell;
+
+        const average = history.at(-1).average;
         const actions = new Array(gridCount).fill(0).map((val, i) => {
-            return average_sell * (1 - priceDiff * (i + 1));
+            return average * (isBuy ? 1 - priceDiff * (i + 1) : 1 + priceDiff * (i + 1));
         });
-        console.log(`priceDiff: ${priceDiff}`);
+        console.log(`action: ${action} priceDiff: ${priceDiff} gridCount:${gridCount}`);
         console.table(actions);
-        //  caculate average price
     } catch (err) {
         console.error('err:', err);
     }
